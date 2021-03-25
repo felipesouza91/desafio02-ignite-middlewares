@@ -9,9 +9,14 @@ app.use(cors());
 
 const users = [];
 
+function findUserByUsername(username) {
+  const user = users.find( item => item.username === username);
+  return user;
+}
+
 function checksExistsUserAccount(request, response, next) {
   const { username } = request.headers;
-  const user = users.find( item => item.username === username);
+  const user = findUserByUsername(username);
   if(!user) {
     return response.status(404).json({error: "User not found!"})
   }
@@ -21,7 +26,7 @@ function checksExistsUserAccount(request, response, next) {
 
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
-  if(!user.pro && user.todos.lenght >= 10 ) {
+  if(!user.pro && user.todos.length >= 10 ) {
     return response.status(403).json({erro: "The limit of todos for free plan was outdated!"})
   }
   next();
@@ -29,7 +34,7 @@ function checksCreateTodosUserAvailability(request, response, next) {
 
 function checksTodoExists(request, response, next) {
   const { username } = request.headers;
-  const user = users.find( item => item.username === username);
+  const user = findUserByUsername(username);
   if(!user) {
     return response.status(404).json({error: "User not found!"})
   }
